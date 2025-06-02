@@ -1,0 +1,35 @@
+name: Deploy VPC with Terraform
+ 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  terraform:
+    name: Apply VPC
+    runs-on: ubuntu-latest
+    env:  # ✅ Set environment variables at the job level
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1  # or your chosen region
+ 
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+ 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.7
+ 
+    - name: Terraform Init
+      working-directory: ./terraform/vpc
+      run: terraform init
+ 
+    - name: Terraform Plan
+      working-directory: ./terraform/vpc
+      run: terraform plan
+ 
+    - name: Terraform Apply
+      working-directory: ./terraform/vpc
+      run: terraform apply -auto-approve
