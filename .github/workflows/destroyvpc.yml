@@ -1,0 +1,30 @@
+name: Destroy VPC with Terraform
+ 
+on:
+  workflow_dispatch:  # 👈 allows manual triggering
+ 
+jobs:
+  destroy:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1  # adjust region as needed
+ 
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+ 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.7
+ 
+    - name: Terraform Init
+      working-directory: ./terraform/vpc
+      run: terraform init
+ 
+    - name: Terraform Destroy
+      working-directory: ./terraform/vpc
+      run: terraform destroy -auto-approve
